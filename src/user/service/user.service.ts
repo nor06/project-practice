@@ -23,6 +23,7 @@ export class UserService {
                 newUser.username = user.username;
                 newUser.email = user.email;
                 newUser.password = passwordHash;
+                newUser.role = user.role;
     
                 return from(this.userRepository.save(newUser)).pipe(
                     map((savedUser: UserEntity) => {
@@ -59,8 +60,6 @@ export class UserService {
             })
         );
     }
-    
-    
 
     findAll(): Observable<User[]> {
         return from(this.userRepository.find()).pipe(
@@ -76,7 +75,6 @@ export class UserService {
             })
         );
     }
-    
 
     deleteOne(id: number): Observable<any> {
         return from(this.userRepository.delete(id));
@@ -87,6 +85,10 @@ export class UserService {
         const { email, password, ...updateData } = user;
     
         return from(this.userRepository.update(id, updateData));
+    }
+
+    updateRoleOfUser(id: number, user: User): Observable<any> {
+        return from(this.userRepository.update(id, user));
     }
 
     login(user: User): Observable<string> {
@@ -124,7 +126,6 @@ export class UserService {
             })
         );
     }
-    
 
     findByMail(email: string): Observable<User | null> {
         return from(
@@ -144,5 +145,4 @@ export class UserService {
             })
         );
     }
-    
 }

@@ -1,22 +1,28 @@
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from "typeorm";
+import { UserRole } from "./user.interface";
 
-@Entity('user_entity') // Table name explicitly defined
+
+
+@Entity()
 export class UserEntity {
 
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'varchar', length: 255 })
+    @Column()
     name: string;
 
-    @Column({ type: 'varchar', length: 255, unique: true })
+    @Column({ unique: true })
     username: string;
 
-    @Column({ type: 'varchar', length: 255, unique: true })
+    @Column()
     email: string;
 
-    @Column({ type: 'varchar', length: 255 })
+    @Column()
     password: string;
+
+    @Column({type: 'enum', enum: UserRole, default: UserRole.USER})
+    role: UserRole;
 
     @BeforeInsert()
     emailToLowerCase() {
