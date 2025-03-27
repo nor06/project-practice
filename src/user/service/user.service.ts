@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../models/user.entity';
 import { Repository } from 'typeorm';
-import { User } from '../models/user.interface';
+import { User, UserRole } from '../models/user.interface';
 import { Observable, from, throwError } from 'rxjs';
 import { switchMap, map, catchError} from 'rxjs/operators';
 import { AuthService } from 'src/auth/services/auth.service';
+import {paginate, Pagination, IPaginationOptions} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class UserService {
@@ -16,6 +17,10 @@ export class UserService {
     ) {}
 
     create(user: User): Observable<Omit<User, 'password'>> {
+        if (!user.password) {
+            return throwError(() => new Error('Password is required.'));
+        }
+    
         return this.authService.hashPassword(user.password).pipe(
             switchMap((passwordHash: string) => {
                 const newUser = new UserEntity();
@@ -23,12 +28,14 @@ export class UserService {
                 newUser.username = user.username;
                 newUser.email = user.email;
                 newUser.password = passwordHash;
-                newUser.role = user.role;
+                newUser.role = UserRole.USER;
+    
+                console.log('Creating user:', newUser); // Debugging
     
                 return from(this.userRepository.save(newUser)).pipe(
                     map((savedUser: UserEntity) => {
-                        const { password, ...result } = savedUser;
-                        return result; // Now TypeScript will accept this
+                        const { password, ...result } = savedUser; // Exclude password
+                        return result; // Ensure the return type matches Omit<User, 'password'>
                     }),
                     catchError((err) => {
                         console.error('Error saving user to database:', err.message);
@@ -42,6 +49,8 @@ export class UserService {
             })
         );
     }
+    
+    
 
     findOne(id: number): Observable<User> {
         return from(this.userRepository.findOne({ where: { id } })).pipe(
@@ -76,44 +85,79 @@ export class UserService {
         );
     }
 
+    paginate(options: IPaginationOptions): Observable<Pagination<User>> {
+        return from(paginate<User>(this.userRepository, options)).pipe(
+          map((usersPageable: Pagination<User>) => {
+            usersPageable.items.forEach((user: User) => {
+              if (user.password) {
+                delete user.password; // Remove the password field if it exists
+              }
+            });
+      
+            return usersPageable;
+          })
+        );
+      }
+      
+
+
+
     deleteOne(id: number): Observable<any> {
         return from(this.userRepository.delete(id));
     }
 
-    updateOne(id: number, user: User): Observable<any> {
-        // Exclude email and password by creating a new object without these properties
-        const { email, password, ...updateData } = user;
+    updateOne(id: number, user: Partial<User>): Observable<any> {
+        const { email, password, role, ...updateData } = user; // Exclude unwanted fields
     
-        return from(this.userRepository.update(id, updateData));
+        return from(this.userRepository.update(id, updateData)).pipe(
+            catchError((err) => {
+                console.error('Error updating user:', err.message);
+                return throwError(() => new Error('Failed to update user.'));
+            })
+        );
     }
+    
+    
 
     updateRoleOfUser(id: number, user: User): Observable<any> {
         return from(this.userRepository.update(id, user));
     }
 
     login(user: User): Observable<string> {
+        if (!user.email || !user.password) {
+            return throwError(() => new Error('Email and password are required.'));
+        }
+    
         return this.validateUser(user.email, user.password).pipe(
-            switchMap((user: User) => {
-                if(user) {
-                    return this.authService.generateJWT(user).pipe(map((jwt: string) => jwt));
+            switchMap((validatedUser: User) => {
+                if (validatedUser) {
+                    return this.authService.generateJWT(validatedUser).pipe(
+                        map((jwt: string) => jwt)
+                    );
                 } else {
-                    return 'Wrong Credentials';
+                    return throwError(() => new Error('Wrong credentials.'));
                 }
             })
-        )
+        );
     }
+    
 
-    validateUser(email: string, password: string): Observable<User> {
+    validateUser(email: string, password: string): Observable<Omit<User, 'password'>> {
         return this.findByMail(email).pipe(
             switchMap((user: User | null) => {
                 if (!user) {
-                    throw new Error('User not found'); // Handle case when no user is found
+                    throw new Error('User not found'); // Handle user not found
                 }
+    
+                if (!user.password) {
+                    throw new Error('Password not found in user record'); // Ensure password exists
+                }
+    
                 return this.authService.comparePasswords(password, user.password).pipe(
                     map((match: boolean) => {
                         if (match) {
                             const { password, ...result } = user; // Exclude password field
-                            return result as User; // Cast result back to User type
+                            return result; // TypeScript infers this as Omit<User, 'password'>
                         } else {
                             throw new Error('Invalid password'); // Handle incorrect password
                         }
@@ -126,6 +170,7 @@ export class UserService {
             })
         );
     }
+    
 
     findByMail(email: string): Observable<User | null> {
         return from(
