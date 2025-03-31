@@ -1,2 +1,25 @@
-<p>login works!</p>
-<button mat-button (click)="login()">Login</button>
+<form class="login" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+
+    <h1 style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">
+      LOGIN
+    </h1>
+
+    <input matInput placeholder="Email" formControlName="email">
+          <mat-hint *ngIf="loginForm.get('email')?.errors && loginForm.get('email')?.touched">
+            Email is required
+          </mat-hint>
+    <div></div>
+
+    <input matInput type="password" placeholder="Password" formControlName="password">
+          <mat-hint *ngIf="loginForm.get('password')?.errors && loginForm.get('password')?.touched">
+            Password is required
+          </mat-hint>
+    <div></div>
+
+    <button mat-flat-button color="primary" [disabled]="loginForm.invalid" type="submit">
+      Login
+    </button>
+
+</form>
+
+
