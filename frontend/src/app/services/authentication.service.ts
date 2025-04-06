@@ -42,7 +42,7 @@ export class AuthenticationService {
   
 
   register(user: User) {
-    return this.http.post<any>('/api/users', user).pipe(
+    return this.http.post<any>('http://localhost:3000/users', user).pipe(
       tap(user => console.log('Registered user:', user))
     );
   }

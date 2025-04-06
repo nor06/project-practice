@@ -1,6 +1,6 @@
 <form class="login" [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
 
-    <h1 style="font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;">REGISTER</h1>
+    <h1 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">REGISTER</h1>
     <input matInput placeholder="Full Name" formControlName="name">
             <mat-hint *ngIf="registerForm.get('name')?.hasError('required') && registerForm.get('name')?.touched">
                 Full name is required
