@@ -1,22 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { AuthenticationService } from '../../services/authentication-service/authentication.service';
 import { Router } from '@angular/router';
-import { map } from 'rxjs/operators';
-
-class CustomValidators {
-  static passwordContainsNumber(control: AbstractControl): ValidationErrors | null {
-    const regex = /\d/;
-    return regex.test(control.value) ? null : { passwordInvalid: true };
-  }
-  
-  static passwordsMatch(control: AbstractControl): ValidationErrors | null {
-    const password = control.get('password')?.value;
-    const confirmPassword = control.get('confirmPassword')?.value;
-    return password === confirmPassword ? null : { passwordsNotMatching: true };
-  }
-  
-  }
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-register',
@@ -45,22 +31,20 @@ export class RegisterComponent implements OnInit {
       password: [null, [
         Validators.required,
         Validators.minLength(3),
-        CustomValidators.passwordContainsNumber
       ]],
       confirmPassword: [null, [Validators.required]]
-    },{
-       validators: CustomValidators.passwordsMatch
-    })
+    });
   }
 
-  onSubmit(){
-    if(this.registerForm.invalid) {
+  onSubmit() {
+    if (this.registerForm.invalid) {
       return;
     }
-    console.log(this.registerForm.value);
+    
+    console.log('Submitting form:', this.registerForm.value);
+    
     this.authService.register(this.registerForm.value).pipe(
-      map(user => this.router.navigate(['login']))
-    ).subscribe()
+      tap(() => this.router.navigate(['login']))  // 🔥 Changed map to tap to execute navigation
+    ).subscribe();
   }
-
 }
