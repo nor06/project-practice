@@ -27,12 +27,24 @@
 
     <input matInput type="password" placeholder="Password Confirmation" formControlName="confirmPassword">
             <mat-hint *ngIf="registerForm.get('confirmPassword')?.hasError('required') && registerForm.get('confirmPassword')?.touched">
-                Password confirmation is required
+                Password is not matching
             </mat-hint>
     <div></div>
 
     <button mat-flat-button color="primary" [disabled]="registerForm.invalid" type="submit">Register</button>
 
 </form>
+
+<h3 *ngIf="registerForm.invalid">Form contains following errors</h3>
+
+<small *ngIf="registerForm.get('password')?.errors?.['passwordInvalid'] && registerForm.get('password')?.touched">
+  Password must contain at least one number
+</small> <br>
+
+<small *ngIf="registerForm.errors?.['passwordsNotMatching'] && registerForm.get('confirmPassword')?.touched">
+  Passwords do not match
+</small>
+
+
 
 
