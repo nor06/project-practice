@@ -1,21 +1,20 @@
 <form class="login" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+  <input matInput placeholder="Email" formControlName="email" style="font-family: monospace;">
+  <mat-hint *ngIf="loginForm.get('email')?.touched">
+      <ng-container *ngIf="loginForm.get('email')?.hasError('required')">Email is required</ng-container>
+      <ng-container *ngIf="loginForm.get('email')?.hasError('email')">Please enter a valid email</ng-container>
+  </mat-hint>
 
-    <input matInput placeholder="Email" formControlName="email" style="font-family: monospace;">
-          <mat-hint *ngIf="loginForm.get('email')?.errors && loginForm.get('email')?.touched">
-            Email is required
-          </mat-hint>
-    <div></div>
+  <div></div>
 
-    <input matInput type="password" placeholder="Password" style="font-family: monospace" formControlName="password">
-          <mat-hint *ngIf="loginForm.get('password')?.errors && loginForm.get('password')?.touched">
-            Password is required
-          </mat-hint>
-    <div></div>
+  <input matInput type="password" placeholder="Password" style="font-family: monospace" formControlName="password">
+  <mat-hint *ngIf="loginForm.get('password')?.touched">
+      <ng-container *ngIf="loginForm.get('password')?.hasError('required')">Password is required</ng-container>
+      <ng-container *ngIf="loginForm.get('password')?.hasError('minlength')">Password must be at least 3 characters long</ng-container>
+  </mat-hint>
+  <div></div>
 
-    <button mat-flat-button color="primary" [disabled]="loginForm.invalid" type="submit">
-      Login
-    </button>
-
+  <button mat-flat-button color="primary" [disabled]="loginForm.invalid" type="submit">
+    Login
+  </button>
 </form>
-
-

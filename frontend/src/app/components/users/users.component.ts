@@ -10,6 +10,9 @@ import { PageEvent } from '@angular/material/paginator';
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements OnInit {
+sortData(arg0: string) {
+throw new Error('Method not implemented.');
+}
 
 
   dataSource: UserData | null = null;

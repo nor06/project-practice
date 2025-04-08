@@ -1,0 +1,79 @@
+/* Adding some padding and margin to the container */
+div[style*="padding-top: 50px;"] {
+    padding-top: 50px;
+  }
+  
+  /* Styling the table header */
+  table.mat-elevation-z8 {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  /* Table header background color */
+.mat-header-cell {
+  background-color: rgb(174, 182, 191); /* Updated color */
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+/* Table row background color */
+.mat-cell {
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  border-bottom: 1px solid #ddd;
+  background-color: rgb(23, 32, 42); /* Updated color */
+}
+
+  
+  /* Styling the paginator to center it */
+  mat-paginator {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  /* Paginator buttons styling */
+  mat-paginator .mat-button {
+    background-color: #3ca0e7;
+    color: white;
+    border-radius: 4px;
+    margin: 0 5px;
+    padding: 5px 15px;
+    transition: background-color 0.3s ease;
+  }
+  
+  mat-paginator .mat-button:hover {
+    background-color: #287aa4;
+  }
+  
+  /* Loading text styling */
+  ng-template#loading {
+    text-align: center;
+    font-size: 16px;
+    color: #3ca0e7;
+    margin-top: 20px;
+  }
+  
+  /* General table and paginator container styling */
+  .container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 15px;
+  }
+  
+  /* Styling for when the table is being loaded */
+  table.mat-elevation-z8 {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  
+  
