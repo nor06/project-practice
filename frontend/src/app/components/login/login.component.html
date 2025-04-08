@@ -1,16 +1,12 @@
 <form class="login" [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
 
-    <h1 style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
-      LOGIN
-    </h1>
-
-    <input matInput placeholder="Email" formControlName="email">
+    <input matInput placeholder="Email" formControlName="email" style="font-family: monospace;">
           <mat-hint *ngIf="loginForm.get('email')?.errors && loginForm.get('email')?.touched">
             Email is required
           </mat-hint>
     <div></div>
 
-    <input matInput type="password" placeholder="Password" formControlName="password">
+    <input matInput type="password" placeholder="Password" style="font-family: monospace" formControlName="password">
           <mat-hint *ngIf="loginForm.get('password')?.errors && loginForm.get('password')?.touched">
             Password is required
           </mat-hint>
